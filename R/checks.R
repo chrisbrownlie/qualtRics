@@ -9,7 +9,7 @@
 #' @keywords internal
 check_credentials <- function(){
   creds <- c(
-    base_url = Sys.getenv("QUALTRICS_BASE_URL"),
+    datacenter_id = Sys.getenv("QUALTRICS_DATACENTER_ID"),
     api_key = Sys.getenv("QUALTRICS_API_KEY")
   )
   # Check that they exist:
@@ -21,7 +21,7 @@ check_credentials <- function(){
   }
 
   # Check URL again just to be sure:
-  checkarg_base_url(Sys.getenv("QUALTRICS_BASE_URL"))
+  checkarg_datacenter_id(Sys.getenv("QUALTRICS_DATACENTER_ID"))
 
   return()
 
@@ -35,34 +35,27 @@ check_credentials <- function(){
 #' @importFrom stringr str_remove
 #' @importFrom stringr str_extract
 #' @keywords internal
-checkarg_base_url <- function(base_url){
+checkarg_datacenter_id <- function(datacenter_id){
 
-  # Check string:
-  checkarg_isstring(base_url)
-
-  # Remove protocol with warning:
-  if(stringr::str_detect(base_url, "^[a-zA-Z]*://")){
-    protocol <- stringr::str_extract(base_url, "^[a-zA-Z]*://")
-    base_url <- stringr::str_remove(base_url, "^[a-zA-Z]*://")
-
-    rlang::inform(
-      glue::glue("Protocol (e.g. '{protocol})' not needed in `base_url`, removing.")
+  # Check datacenter ID against the nine possible data centers (or mock server)
+  datacenter_id <- rlang::arg_match0(
+    datacenter_id,
+    values = c(
+      "yul1",
+      "iad1",
+      "sjc1",
+      "fra1",
+      "lhr1",
+      "syd1",
+      "sin1",
+      "hnd1",
+      "gov1",
+      "mock"
     )
+  )
 
-  }
-  # Remove trailing '/' if present (silently), and check for qualtrics.com ending:
-  if(endsWith(base_url, "qualtrics.com/")){
-    base_url <- stringr::str_remove(base_url, "/$")
-  } else if (!endsWith(base_url, ".qualtrics.com")){
-    rlang::abort(
-      c("Error in argument `base_url`",
-        "`base_url` must be of the form '{datacenter ID}.qualtrics.com'",
-        "See https://api.qualtrics.com/ZG9jOjg3NjYzMw-base-url-and-datacenter-i-ds"
-      )
-    )
-  }
-  # Return amended base_url:
-  return(base_url)
+  # Return amended datacenter_id:
+  return(datacenter_id)
 }
 
 

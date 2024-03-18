@@ -130,13 +130,36 @@ generate_url <-
 
     # Get the user's specific base URL from environment
     # (and check it again in case the user has modified it externally somehow):
-    base_url <-
-      checkarg_base_url(
-        Sys.getenv("QUALTRICS_BASE_URL")
+    datacenter_id <-
+      checkarg_datacenter_id(
+        Sys.getenv("QUALTRICS_DATACENTER_ID")
       )
+
     # Construct URL root for the v3 api endpoint:
     root_url <-
-      glue::glue("https://{base_url}/API/v3")
+      glue::glue("https://{datacenter_id}.qualtrics.com/API/v3")
+
+    # Construct URL root if using mock server
+    if (datacenter_id == "mock") {
+
+      api_id <- switch(
+        query,
+        allsurveys = "60937",
+        allmailinglists = "60926",
+        metadata = "60937",
+        exportresponses = "60929",
+        exportresponses_progress = "60929",
+        exportresponses_file = "60929",
+        fetchdescription = "60936",
+        fetchmailinglist = "60926",
+        fetchdistributions = "60919",
+        fetchdistributionhistory = "60919",
+        listdistributionlinks = "60919",
+        rlang::abort("Internal error: invalid URL generation query")
+      )
+
+      root_url <- glue::glue("https://stoplight.io/mocks/qualtricsv2/publicapidocs/{api_id}")
+    }
 
     # List of templates for how to build URLs
     # (add to this when new functions made):
@@ -225,6 +248,7 @@ qualtrics_api_request <-
            as = c("parsed", "raw"),
            ...
            ) {
+
     # Match args
     verb <- rlang::arg_match(verb)
     as <- rlang::arg_match(as)

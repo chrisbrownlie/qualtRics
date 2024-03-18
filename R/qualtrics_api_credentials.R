@@ -46,7 +46,7 @@
 
 qualtrics_api_credentials <-
   function(api_key,
-           base_url,
+           datacenter_id,
            overwrite = FALSE,
            install = FALSE,
            report = FALSE) {
@@ -56,7 +56,7 @@ qualtrics_api_credentials <-
     if(report){
       creds <- c(
         api_key = Sys.getenv("QUALTRICS_API_KEY"),
-        base_url = Sys.getenv("QUALTRICS_BASE_URL")
+        datacenter_id = Sys.getenv("QUALTRICS_DATACENTER_ID")
       )
       return(creds)
     }
@@ -65,7 +65,7 @@ qualtrics_api_credentials <-
     checkarg_isboolean(install)
     checkarg_isstring(api_key)
 
-    base_url <- checkarg_base_url(base_url)
+    datacenter_id <- checkarg_datacenter_id(datacenter_id)
 
     if (install) {
 
@@ -85,19 +85,19 @@ qualtrics_api_credentials <-
         if (isTRUE(overwrite)) {
           message("Your original .Renviron will be backed up and stored in your R HOME directory if needed.")
           oldenv <- readLines(renv)
-          newenv <- oldenv[-grep("QUALTRICS_API_KEY|QUALTRICS_BASE_URL", oldenv)]
+          newenv <- oldenv[-grep("QUALTRICS_API_KEY|QUALTRICS_DATACENTER_ID", oldenv)]
           writeLines(newenv, renv)
         }
         else {
           tv <- readLines(renv)
-          if (any(grepl("QUALTRICS_API_KEY|QUALTRICS_BASE_URL", tv))) {
+          if (any(grepl("QUALTRICS_API_KEY|QUALTRICS_DATACENTER_ID", tv))) {
             stop("Qualtrics credentials already exist. You can overwrite them with the argument overwrite=TRUE", call. = FALSE)
           }
         }
       }
 
       keyconcat <- paste0("QUALTRICS_API_KEY = '", api_key, "'")
-      urlconcat <- paste0("QUALTRICS_BASE_URL = '", base_url, "'")
+      urlconcat <- paste0("QUALTRICS_DATACENTER_ID = '", datacenter_id, "'")
       # Append credentials to .Renviron file
       write(keyconcat, renv, sep = "\n", append = TRUE)
       write(urlconcat, renv, sep = "\n", append = TRUE)
@@ -106,7 +106,7 @@ qualtrics_api_credentials <-
       message("To install your credentials for use in future sessions, run this function with `install = TRUE`.")
       Sys.setenv(
         QUALTRICS_API_KEY = api_key,
-        QUALTRICS_BASE_URL = base_url
+        QUALTRICS_DATACENTER_ID = datacenter_id
       )
     }
   }
