@@ -496,6 +496,8 @@ export_responses_filedownload <-
         fileID = fileID
       )
 
+    # If using mock server, skip the rest of the function as the mock server does not return a file that can be downloaded/processed
+
     # Load raw zip file:
     raw_zip <-
       qualtrics_api_request(

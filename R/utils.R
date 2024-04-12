@@ -169,7 +169,7 @@ generate_url <-
         allsurveys = "{rooturl}/surveys/",
         allmailinglists = "{rooturl}/mailinglists/",
         metadata = "{rooturl}/surveys/{surveyID}/",
-        exportresponses = "{rooturl}/surveys/{surveyID}/export-responses/",
+        exportresponses = "{rooturl}/surveys/{surveyID}/export-responses",
         exportresponses_progress = "{rooturl}/surveys/{surveyID}/export-responses/{requestID}",
         exportresponses_file = "{rooturl}/surveys/{surveyID}/export-responses/{fileID}/file",
         fetchdescription = "{rooturl}/survey-definitions/{surveyID}/",
